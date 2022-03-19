@@ -15,6 +15,13 @@ const { UserInputError } = require('apollo-server');
 const User = require('../../models/User');
 const { SECRET_KEY } = require('../../config');
 const Utils_1 = require("./../../utils/Utils");
+function generateToken(user) {
+    return jwt.sign({
+        id: user.id,
+        userName: user.userName,
+        email: user.email
+    }, SECRET_KEY, { expiresIn: '1h' });
+}
 module.exports = {
     Mutation: {
         register(parent, { registerInput: { userName, email, password, confirmPassword } }) {
@@ -39,12 +46,36 @@ module.exports = {
                     createdAt: new Date().toISOString()
                 });
                 const res = yield newUser.save();
-                const token = jwt.sign({
-                    id: res.id,
-                    userName: res.userName,
-                    email: res.email
-                }, SECRET_KEY, { expiresIn: '1h' });
+                const token = generateToken(res);
                 return Object.assign(Object.assign({}, res._doc), { id: res._id, token });
+            });
+        },
+        login(parent, { userName, password }) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const isValid = Utils_1.Utils.validateLoginInput(userName, password);
+                if (!Object.keys(isValid).length) {
+                    const user = yield User.findOne({ userName });
+                    if (!user) {
+                        throw new UserInputError('Invalid login', {
+                            errors: {
+                                login: 'Invalid login attempt!'
+                            }
+                        });
+                    }
+                    const match = yield bcrypt.compare(password, user.password);
+                    if (!match) {
+                        throw new UserInputError('Invalid credentials entered', {
+                            errors: {
+                                invalid: 'Invalid credentials entered!'
+                            }
+                        });
+                    }
+                    const token = generateToken(user);
+                    return Object.assign(Object.assign({}, user._doc), { id: user._id, token });
+                }
+                else {
+                    throw new UserInputError('Mandatory fields missing!', { errors: Object.assign({}, isValid) });
+                }
             });
         }
     }

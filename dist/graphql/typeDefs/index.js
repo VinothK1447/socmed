@@ -29,6 +29,7 @@ module.exports = gql `
 
 	type Mutation {
 		register(registerInput: RegisterInput): User!
+		login(userName: String!, password: String!): User!
 	}
 `;
 //# sourceMappingURL=index.js.map

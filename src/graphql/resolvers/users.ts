@@ -5,6 +5,19 @@ const { UserInputError } = require('apollo-server')
 const User = require('../../models/User')
 const { SECRET_KEY } = require('../../config')
 import { Utils } from './../../utils/Utils'
+import { IUser } from '../../tsProps/typeProps'
+
+function generateToken(user: IUser) {
+	return jwt.sign(
+		{
+			id: user.id,
+			userName: user.userName,
+			email: user.email
+		},
+		SECRET_KEY,
+		{ expiresIn: '1h' }
+	)
+}
 
 module.exports = {
 	Mutation: {
@@ -30,19 +43,41 @@ module.exports = {
 			})
 
 			const res = await newUser.save()
-			const token = jwt.sign(
-				{
-					id: res.id,
-					userName: res.userName,
-					email: res.email
-				},
-				SECRET_KEY,
-				{ expiresIn: '1h' }
-			)
+			const token = generateToken(res)
 			return {
 				...res._doc,
 				id: res._id,
 				token
+			}
+		},
+		async login(parent, { userName, password }) {
+			const isValid = Utils.validateLoginInput(userName, password)
+			if (!Object.keys(isValid).length) {
+				const user = await User.findOne({ userName })
+				if (!user) {
+					throw new UserInputError('Invalid login', {
+						errors: {
+							login: 'Invalid login attempt!'
+						}
+					})
+				}
+				const match = await bcrypt.compare(password, user.password)
+				if (!match) {
+					throw new UserInputError('Invalid credentials entered', {
+						errors: {
+							invalid: 'Invalid credentials entered!'
+						}
+					})
+				}
+
+				const token = generateToken(user)
+				return {
+					...user._doc,
+					id: user._id,
+					token
+				}
+			} else {
+				throw new UserInputError('Mandatory fields missing!', { errors: { ...isValid } })
 			}
 		}
 	}
