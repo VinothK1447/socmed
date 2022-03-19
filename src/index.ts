@@ -1,5 +1,5 @@
-const { ApolloServer } = require('apollo-server')
-const mongoose = require('mongoose')
+import { ApolloServer } from 'apollo-server'
+import mongoose from 'mongoose'
 
 const { MONGODB } = require('./config')
 const typeDefs = require('./graphql/typeDefs')
@@ -12,10 +12,10 @@ const server = new ApolloServer({
 
 mongoose
 	.connect(MONGODB)
-	.then((res) => {
+	.then(() => {
 		console.log('Connected to MongoDB!')
 		return server.listen()
 	})
-	.then((res) => {
-		console.log(`Server ${res.url} started at port ${res.port}!`)
+	.then(() => {
+		console.log(`Server started successfully!`)
 	})

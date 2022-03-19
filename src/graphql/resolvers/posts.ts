@@ -1,4 +1,4 @@
-const Post = require('../../models/Post')
+const Post = require('./../../models/Post')
 
 module.exports = {
 	Query: {
@@ -7,7 +7,7 @@ module.exports = {
 				const posts = await Post.find()
 				return posts
 			} catch (error) {
-				throw new Error(error)
+				throw new Error('Error')
 			}
 		}
 	}
