@@ -21,6 +21,22 @@ module.exports = {
                     throw new Error('Error');
                 }
             });
+        },
+        getPost(parent, { postId }) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const post = yield Post.findById(postId);
+                    if (post) {
+                        return post;
+                    }
+                    else {
+                        throw new Error('Post not found!');
+                    }
+                }
+                catch (err) {
+                    throw new Error(err);
+                }
+            });
         }
     }
 };

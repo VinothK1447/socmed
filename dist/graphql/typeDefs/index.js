@@ -8,10 +8,6 @@ module.exports = gql `
 		createdAt: String!
 	}
 
-	type Query {
-		getPosts: [Post]
-	}
-
 	input RegisterInput {
 		userName: String!
 		password: String!
@@ -27,9 +23,16 @@ module.exports = gql `
 		userName: String!
 	}
 
+	type Query {
+		getPosts: [Post]
+		getPost(postId: ID!): Post
+	}
+
 	type Mutation {
 		register(registerInput: RegisterInput): User!
 		login(userName: String!, password: String!): User!
+		createPost(body: String): Post!
+		deletePost(postId: ID!): String!
 	}
 `;
 //# sourceMappingURL=index.js.map
