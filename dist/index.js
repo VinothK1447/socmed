@@ -10,7 +10,10 @@ const typeDefs = require('./graphql/typeDefs');
 const resolvers = require('./graphql/resolvers');
 const server = new apollo_server_1.ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: ({ req }) => ({
+        req
+    })
 });
 mongoose_1.default
     .connect(MONGODB)
