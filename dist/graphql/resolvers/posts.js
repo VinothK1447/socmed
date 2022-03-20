@@ -8,6 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+const apollo_server_1 = require("apollo-server");
 const Post = require('./../../models/Post');
 const checkAuth = require('../../utils/check-auth');
 module.exports = {
@@ -44,6 +46,9 @@ module.exports = {
         createPost(parent, { body }, context) {
             return __awaiter(this, void 0, void 0, function* () {
                 const user = checkAuth(context);
+                if (!body) {
+                    throw new apollo_server_1.UserInputError('Post body cannot be empty!');
+                }
                 const newPost = new Post({
                     body,
                     user: user.id,

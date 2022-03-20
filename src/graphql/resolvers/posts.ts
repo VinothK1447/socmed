@@ -1,3 +1,5 @@
+import { UserInputError } from 'apollo-server'
+
 const Post = require('./../../models/Post')
 const checkAuth = require('../../utils/check-auth')
 
@@ -28,6 +30,9 @@ module.exports = {
 	Mutation: {
 		async createPost(parent, { body }, context) {
 			const user = checkAuth(context)
+			if (!body) {
+				throw new UserInputError('Post body cannot be empty!')
+			}
 			const newPost = new Post({
 				body,
 				user: user.id,
