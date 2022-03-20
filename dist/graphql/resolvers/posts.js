@@ -19,7 +19,7 @@ module.exports = {
                     return posts;
                 }
                 catch (error) {
-                    throw new Error('Error');
+                    throw new Error('Error fetching posts!');
                 }
             });
         },

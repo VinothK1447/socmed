@@ -8,9 +8,7 @@ const resolvers = require('./graphql/resolvers')
 const server = new ApolloServer({
 	typeDefs,
 	resolvers,
-	context: ({ req }) => ({
-		req
-	})
+	context: ({ req }) => ({ req })
 })
 
 mongoose
