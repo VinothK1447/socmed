@@ -1,6 +1,10 @@
 export type postsProps = {
 	posts: post[]
 }
+export type cardProps = {
+	post: post
+}
+
 export type post = {
 	id: string
 	userName: string
